@@ -1,7 +1,37 @@
 @echo off
 
-echo Compiling Attack!...
+ECHO Compiling Attack!...
 
-g++ -o build\Attack!.exe src\*.cpp
+SET debug=%1
+SET build_cmd=%2
 
-echo Compiling Complete.
+IF NOT DEFINED build_cmd (SET build_cmd="core")
+IF NOT DEFINED debug (SET debug="false")
+
+IF "%debug%"=="d" (
+
+    ECHO DEBUGGING ENABLED
+    g++ -std=c++20^
+    -Wall -D LOG_LEVEL_INIT=3^
+    -D GLEW_STATIC -L deps\external\GLFW\lib -L deps\external\GLEW\lib^
+    -o build\Attack!.exe^
+    deps\external\vendor\imgui\*.cpp^
+    src\engine\*.cpp^
+    src\scenes\*.cpp^
+    src\*.cpp^
+    -lglew32s -lglfw3 -lgdi32 -lopengl32
+
+) ELSE IF %debug%=="false" (
+
+    g++ -std=c++20^
+    -D GLEW_STATIC -L deps\external\GLFW\lib -L deps\external\GLEW\lib^
+    -o build\Attack!.exe^
+    deps\external\vendor\imgui\*.cpp^
+    src\engine\*.cpp^
+    src\scenes\*.cpp^
+    src\*.cpp^
+    -lglew32s -lglfw3 -lgdi32 -lopengl32
+    
+)  
+
+ECHO Compiling Complete.
