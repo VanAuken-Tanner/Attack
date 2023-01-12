@@ -6,7 +6,7 @@
 
 Renderer::Renderer()
 {
-    Debugger::Log_Console("Renderer Constructor Called.");
+    Debugger<DEBUG_LEVEL>::Log_Console("Renderer Constructor Called.");
 }
 
 Renderer::~Renderer()

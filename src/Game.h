@@ -28,6 +28,7 @@
 //Scenes
 #include "scenes\Scene.h"
 #include "scenes\Scene_Menu.h"
+#include "scenes\Scene_Test.h"
 #include "scenes\Scene_Clear.h"
 #include "scenes\Scene_Battle.h"
 

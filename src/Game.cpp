@@ -13,8 +13,9 @@ Game::~Game()
 void Game::Init()
 {
     g_gameState = GameState::Initializing;
-    //Debugger::SetLogLevel((Debugger::eLogLevel)LOG_LEVEL_INIT);
-    Debugger::Break(__FILE__, __LINE__);
+       
+    Debugger<DEBUG_LEVEL>::Log_Console("Debugging set and enabled.");
+
 
     /* Initialize the library */
     if (!glfwInit())
@@ -37,7 +38,7 @@ void Game::Init()
     glfwMakeContextCurrent(window_);
 
     if(glewInit() != GLEW_OK)
-        Debugger::Log_Console("Failed to init glew");
+        Debugger<DEBUG_LEVEL>::Log_Console("Failed to init glew");
 
     //Log(glGetString(GL_VERSION));
     std::cout << glGetString(GL_VERSION) << std::endl;
@@ -60,12 +61,13 @@ void Game::Run()
     Scene* pCurrentScene = nullptr;
     Scene_Menu* pSceneMenu = new Scene_Menu(pCurrentScene);
     pCurrentScene = pSceneMenu; 
+    pSceneMenu->RegisterTest<Scene_Test>("Scene Test");
     pSceneMenu->RegisterTest<Scene_Clear>("Clear Color");
     pSceneMenu->RegisterTest<Scene_Battle>("Battle Scene");
 
     if(g_gameState != GameState::Exiting)
     {
-        Debugger::Log_Console("Setting GameState = Running...\nBeggining main game loop.");
+        Debugger<DEBUG_LEVEL>::Log_Console("Setting GameState = Running...\nBeggining main game loop.");
         g_gameState = GameState::Running;
     }
 
@@ -125,5 +127,5 @@ void Game::Close()
     
     glfwTerminate();
 
-    Debugger::Log_Console("Ending Application...");
+    Debugger<0>::Log_Console("Ending Application...");
 }

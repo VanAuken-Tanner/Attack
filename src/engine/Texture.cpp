@@ -33,14 +33,14 @@ Texture::Texture(std::string& filepath, int slot)
     if(LocalBuffer_)
     { 
         stbi_image_free(LocalBuffer_);
-        Debugger::Log_Console("Texture loaded successfully");
+        Debugger<DEBUG_LEVEL>::Log_Console("Texture loaded successfully");
     }
     else
     {
-        Debugger::Log_Console("!!! Texture failed to load\n",
+        Debugger<DEBUG_LEVEL>::Log_Console("!!! Texture failed to load\n",
          Filepath_, " : ", 
          "(", Width_, " x ", Height_, ")");
-	    Debugger::Log_Console(stbi_failure_reason());
+	    Debugger<DEBUG_LEVEL>::Log_Console(stbi_failure_reason());
     }
 }
 

@@ -58,16 +58,16 @@ unsigned int Shader::CompileShader(unsigned int type, const std::string& source)
         char* message = new char;
 
         glGetShaderInfoLog(id, length, &length, message);
-        Debugger::Log_Console("Failed to compile Shader");
-        Debugger::Log_Console((type == GL_VERTEX_SHADER) ? "vertex" : "fragment");
-        Debugger::Log_Console(message);
+        Debugger<DEBUG_LEVEL>::Log_Console("Failed to compile Shader");
+        Debugger<DEBUG_LEVEL>::Log_Console((type == GL_VERTEX_SHADER) ? "vertex" : "fragment");
+        Debugger<DEBUG_LEVEL>::Log_Console(message);
         glDeleteShader(id);
 
         delete message;
         return 0;
     }
 
-    Debugger::Log_Console("Shader Compiled...");
+    Debugger<DEBUG_LEVEL>::Log_Console("Shader Compiled...");
 
     return id;
 }

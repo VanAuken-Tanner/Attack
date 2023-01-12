@@ -13,7 +13,7 @@ public:
     template<typename T>
     void RegisterTest(const std::string& name)
     {
-        Debugger::Log_Console("Registering Scene - " + name);
+        Debugger<DEBUG_LEVEL>::Log_Console("Registering Scene - " + name);
         m_Scenes.push_back(std::make_pair(name, []() { return new T(); }));//make pairs of scenes with an anonymous function
     }
 

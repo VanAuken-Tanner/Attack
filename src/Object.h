@@ -2,11 +2,8 @@
 
 #include <vector>
 #include <string>
+#include "..\deps\external\vendor\glm\glm.hpp"
 
-struct Point
-{
-    float x, y, z;
-};
 
 struct Face
 {
@@ -29,8 +26,8 @@ public:
     Object(std::string filepath, unsigned int tex_id, float xpos = 0, float ypos = 0, float zpos = 0, float scale = 1.0f);
     ~Object();
 
-    std::vector<Point> m_Points;
-    std::vector<Point> m_TexturePoints;
+    std::vector<glm::vec3> m_Points;
+    std::vector<glm::vec2> m_TexturePoints;
     //std::vector<Face>  m_Faces; - not implemented
     std::vector<unsigned int> m_Indices;
     std::vector<unsigned int> m_TextureIndices;

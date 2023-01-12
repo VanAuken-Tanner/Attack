@@ -15,7 +15,7 @@ Scene_Battle::Scene_Battle()
         bCreateObject_(false), bUpdateBackground_(true), bUpdateCharacters_(true),
         Camera_(-8.0f, 8.0f, -4.5f, 4.5f) // 16:9 - I guess.. idk how this should be set up...
 {
-    Debugger::Log_Console("!!!Constructing Battle!!!");
+    Debugger<DEBUG_LEVEL>::Log_Console("!!!Constructing Battle!!!");
 
     vb_layout_.Push<float>(3);//3D coords
     vb_layout_.Push<float>(2);//Texture Coords
@@ -44,7 +44,7 @@ void Scene_Battle::OnUpdate(float deltaTine)
 {
     if(UpdateCharacterPos_.x != 0.0f || UpdateCharacterPos_.y != 0.0f || UpdateCharacterPos_.z != 0.0f)
     {
-        Debugger::Log_Console("UPDATE CHAR POS: (", UpdateCharacterPos_.x, ",", UpdateCharacterPos_.y, ",", UpdateCharacterPos_.z, ")");
+        Debugger<DEBUG_LEVEL>::Log_Console("UPDATE CHAR POS: (", UpdateCharacterPos_.x, ",", UpdateCharacterPos_.y, ",", UpdateCharacterPos_.z, ")");
         Characters_.Objects_.at(0)->UpdatePosition(UpdateCharacterPos_.x, UpdateCharacterPos_.y, UpdateCharacterPos_.z);
         UpdateBuffers();
         UpdateCharacterPos_ = glm::vec3(0,0,0);
@@ -53,7 +53,7 @@ void Scene_Battle::OnUpdate(float deltaTine)
     
     if(bCreateObject_)
     {
-        Debugger::Log_Console("Creating a new object.");
+        Debugger<DEBUG_LEVEL>::Log_Console("Creating a new object.");
         Object* object = new Object("res/models/TestQuad.obj", CHAR_LAYER, CreateAtPos_.x, CreateAtPos_.y, CreateAtPos_.z, 0.5f);
         Characters_.Objects_.push_back(object);
         
@@ -110,7 +110,7 @@ void Scene_Battle::OnHandleInput(GLFWwindow* window)
 
 void Scene_Battle::UpdateBuffers()
 {
-    Debugger::Log_Console("Updating Buffers...");
+    Debugger<DEBUG_LEVEL>::Log_Console("Updating Buffers...");
 
     unsigned int curVerticiCount = 0;
     VertexData_.clear();
@@ -118,7 +118,7 @@ void Scene_Battle::UpdateBuffers()
 
     if(Background_.Objects_.size() > 0)
     {
-        Debugger::Log_Console("Filling Buffers...", "Background");
+        Debugger<DEBUG_LEVEL>::Log_Console("Filling Buffers...", "Background");
 
         for (int j = 0; j < (int)Background_.Objects_.size(); j++)
         {
@@ -130,7 +130,7 @@ void Scene_Battle::UpdateBuffers()
 
     if(Characters_.Objects_.size() > 0)
     {
-        Debugger::Log_Console("Filling Buffers...", "Characters");
+        Debugger<DEBUG_LEVEL>::Log_Console("Filling Buffers...", "Characters");
 
         for (int j = 0; j < (int)Characters_.Objects_.size(); j++)
         {

@@ -5,7 +5,7 @@
 Scene_Clear::Scene_Clear()
     : m_clearColor {1.0f, 1.0f, 1.0f, 1.0f}
 {
-    Debugger::Log_Console("Constructing Scene Clear.");
+    Debugger<DEBUG_LEVEL>::Log_Console("Constructing Scene Clear.");
 }
 
 Scene_Clear::~Scene_Clear()

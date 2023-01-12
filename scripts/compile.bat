@@ -12,7 +12,7 @@ IF "%debug%"=="d" (
 
     ECHO DEBUGGING ENABLED
     g++ -std=c++20^
-    -Wall -D LOG_LEVEL_INIT=3^
+    -Wall -D DEBUG_LEVEL=3^
     -D GLEW_STATIC -L deps\external\GLFW\lib -L deps\external\GLEW\lib^
     -o build\Attack!.exe^
     deps\external\vendor\imgui\*.cpp^

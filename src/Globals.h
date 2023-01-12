@@ -1,9 +1,8 @@
 #pragma once
 
-#ifndef LOG_LEVEL_INIT
-    #define LOG_LEVEL_INIT 0
+#ifndef DEBUG_LEVEL
+    #define DEBUG_LEVEL 0
 #endif
-
 
 enum GameState{
     Initializing,
