@@ -15,18 +15,19 @@ void Game::Init()
     g_gameState = GameState::Initializing;
        
     Debugger<DEBUG_LEVEL>::Log_Console("Debugging set and enabled.");
-
+    
+    //ASSERT(false);
 
     /* Initialize the library */
     if (!glfwInit())
         return;
 
-    //Before we create our window_ we are going to setup some open GL 
+    //Before we create our window we are going to setup some open GL 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    /* Create a window_ed mode window_ and its OpenGL context */
+    /* Create a windowed mode window and its OpenGL context */
     window_ = glfwCreateWindow(1600, 900, "Attack!", NULL, NULL);
     if (!window_)
     {
@@ -71,12 +72,53 @@ void Game::Run()
         g_gameState = GameState::Running;
     }
 
+    //https://stackoverflow.com/questions/12574565/moving-object-stutters-using-delta-time-to-unify-speed
+    //#define TAU (M_PI * 2.0)
+    // a += deltaTime * speed;
+    // // Optional, keep the cycle bounded to reduce precision errors
+    // // if you plan to leave this running for a long time...
+    // if( a > TAU ) a -= TAU;
+    // x = sin( a ) * 0.8f;
+    // y = cos( a ) * 0.8f;
+
+
+    //The beggining of time!
+    double curFrame, deltaTime, prevFrame;
+
+    //Begin InputHandling
+    
+
+    InputHandler::AddKeyAction<'w'>([](bool pressed) { 
+        std::cout << "w key: Pressed!!" << std::endl; 
+    });
+
+    InputHandler::AddKeyAction<'a'>([](bool pressed) {
+        std::cout << "a key: Pressed!!" << std::endl;
+
+    });
+
+    InputHandler::AddKeyAction<'s'>([](bool pressed) { 
+        std::cout << "s key: Pressed!!" << std::endl; 
+    });
+
+    InputHandler::AddKeyAction<'d'>( [](bool pressed) { 
+        std::cout << "d key: Pressed!!" << std::endl; 
+    });
+
+    InputHandler::AddKeyAction<' '>( [](bool pressed) { 
+        std::cout << "space key pressed." << std::endl;
+        ASSERT(false); 
+    });
+
     //Main Game Loop
     /* Loop until the user closes the window_ */
     while (!glfwWindowShouldClose(window_) && g_gameState == GameState::Running)
     {
-        // GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
-        // GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
+        //get and update time
+        curFrame = glfwGetTime();
+        deltaTime = curFrame - prevFrame;
+        prevFrame = curFrame;
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -85,10 +127,10 @@ void Game::Run()
 
         if(pCurrentScene)
         {
-            pCurrentScene->OnUpdate(0);
+            pCurrentScene->OnUpdate(deltaTime);
             pCurrentScene->OnRender();
             pCurrentScene->OnImGuiRender();
-            pCurrentScene->OnHandleInput(window_);
+            pCurrentScene->OnHandleInput();
 
             if(pCurrentScene->Exiting())
             {
@@ -106,7 +148,43 @@ void Game::Run()
         /* Poll for and process events */
         GL_CALL(glfwPollEvents());
 
-        //handle events
+        //Gets and Sets KeyStates
+        GL_CALL(glfwSetKeyCallback(window_, InputHandler::key_callback)); 
+
+
+        if(!InputHandler::GetIsKeyHandled('w'))
+        {
+            InputHandler::QueueAction(InputHandler::GetKeyAction('w'));
+            InputHandler::SetKeyHandled('w');
+            
+        }
+
+        if(!InputHandler::GetIsKeyHandled('a'))
+        {
+            InputHandler::QueueAction(InputHandler::GetKeyAction('a'));
+            InputHandler::SetKeyHandled('a');
+            
+        }
+
+        if(!InputHandler::GetIsKeyHandled('s'))
+        {
+            InputHandler::QueueAction(InputHandler::GetKeyAction('s'));
+            InputHandler::SetKeyHandled('s');
+            
+        }
+
+        if(!InputHandler::GetIsKeyHandled('d'))
+        {
+            InputHandler::QueueAction(InputHandler::GetKeyAction('d'));
+            InputHandler::SetKeyHandled('d');
+            
+        }
+
+        if(InputHandler::GetActionCount() > 0)
+        {
+            InputHandler::ExecuteActions();        
+            //ASSERT(false);
+        }
              
     }
 

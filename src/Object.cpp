@@ -4,14 +4,13 @@
 #include <fstream>
 #include <sstream>
 
-#include "Debug.h"
 
-Object::Object(std::string filepath, unsigned int tex_id, float xpos, float ypos, float zpos, float scale)
-    :   textureId_(tex_id), m_xpos(xpos), m_ypos(ypos), m_zpos(zpos), m_scale(scale)
+
+Object::Object(std::string filepath, unsigned int tex_id, glm::vec3 position)
+    :   ObjFilepath_(filepath), textureId_(tex_id), Position_(position)
 {
     Debugger<DEBUG_LEVEL>::Log_Console("Constructing Object: ", filepath);
     LoadObjectFromOBJ(filepath);
-    UpdatePos();
     PrintAll();
 }
 
@@ -19,9 +18,36 @@ Object::~Object()
 {
 }
 
-//Reads an obj file line by line to fill our vertices, texture vertices, and indices
-void Object::LoadObjectFromOBJ(std::string filepath)
+unsigned int Object::GetVertexBufferData(std::vector<float>& vertex_buffer)
+{    
+    for (int i = 0; i < (int)Vertices_.size(); i++)
+    {
+        vertex_buffer.push_back(Vertices_.at(i).x + Position_.x);
+        vertex_buffer.push_back(Vertices_.at(i).y + Position_.y);
+        vertex_buffer.push_back(Vertices_.at(i).z + Position_.z);
+
+        vertex_buffer.push_back(TextureVerticies_.at(i).x);
+        vertex_buffer.push_back(TextureVerticies_.at(i).y);
+
+        vertex_buffer.push_back(textureId_);
+
+    }
+    return Vertices_.size();
+    
+}
+
+unsigned int Object::GetIndiciBufferData(std::vector<unsigned int>& index_buffer, unsigned int start)
 {
+    for(int i = 0; i < (int)Indices_.size(); i++)
+        index_buffer.push_back( Indices_.at(i) + start);
+
+    return Indices_.size();   
+}
+
+//Reads an obj file line by line to fill our vertices, texture vertices, and indices
+void Object::LoadObjectFromOBJ(std::string& filepath)
+{
+
     std::ifstream inFile (filepath);
     std::string line;
 
@@ -61,7 +87,7 @@ void Object::LoadObjectFromOBJ(std::string filepath)
                     sVec += line.at(iter);
             }
             //done with the line add our point to our points
-            m_Points.push_back(point);
+            Vertices_.push_back(point);
         }
         else if(start == "vt")
         {
@@ -89,7 +115,7 @@ void Object::LoadObjectFromOBJ(std::string filepath)
                     sVec += line.at(iter);
             }
             //done with the line add our point to the
-            m_TexturePoints.push_back(point);
+            TextureVerticies_.push_back(point);
         }
         else if(start == "f ")
         {
@@ -110,9 +136,9 @@ void Object::LoadObjectFromOBJ(std::string filepath)
                         if(sIndiciTuple.at(i) == '/' || i == (int)sIndiciTuple.size() - 1)
                         {
                             if(iIniciIndex == 0)
-                                m_Indices.push_back((unsigned int)std::stoul(sIndici) - 1);
+                                Indices_.push_back((unsigned int)std::stoul(sIndici) - 1);
                             if(iIniciIndex == 1)
-                                m_TextureIndices.push_back((unsigned int)std::stoul(sIndici) - 1);
+                                TextureIndices_.push_back((unsigned int)std::stoul(sIndici) - 1);
                             
                             
                             sIndici = "";
@@ -135,62 +161,6 @@ void Object::LoadObjectFromOBJ(std::string filepath)
     }    
 }
 
-void Object::UpdatePosition(float xpos, float ypos, float zpos) 
-{
-    Debugger<DEBUG_LEVEL>::Log_Console("Updating OBJECT position: x-", m_xpos, ", y-", m_ypos, ", z-", m_zpos);
-    Debugger<DEBUG_LEVEL>::Log_Console("Updating OBJECT position: x-", xpos, ", y-", ypos, ", z-", zpos);
-    m_xpos += xpos; m_ypos += ypos; m_zpos = zpos;
-    Debugger<DEBUG_LEVEL>::Log_Console("Updating OBJECT position: x-", m_xpos, ", y-", m_ypos, ", z-", m_zpos);
-    UpdatePos();
-}
-
-
-void Object::UpdatePos()
-{
-    PrintVertices();
-    for(int i = 0; i < (int)m_Points.size(); i++)
-    { 
-        // m_Points.at(i).x = (m_Points.at(i).x *= m_scale) + m_xpos;
-        // m_Points.at(i).y = (m_Points.at(i).y *= m_scale) + m_ypos;
-        // m_Points.at(i).z = (m_Points.at(i).z *= m_scale) + m_zpos;
-
-        m_Points.at(i).x += m_xpos;
-        m_Points.at(i).y += m_ypos;
-        m_Points.at(i).z += m_zpos;
-
-        PrintVertices();
-    }
-    PrintVertices();
-}
-
-unsigned int Object::GetVertexBufferData(std::vector<float>& vertex_buffer)
-{    
-    for (int i = 0; i < (int)m_Points.size(); i++)
-    {
-        vertex_buffer.push_back(m_Points.at(i).x);
-        vertex_buffer.push_back(m_Points.at(i).y);
-        vertex_buffer.push_back(m_Points.at(i).z);
-
-        vertex_buffer.push_back(m_TexturePoints.at(i).x);
-        vertex_buffer.push_back(m_TexturePoints.at(i).y);
-
-        vertex_buffer.push_back(textureId_);
-
-    }
-    return m_Points.size();
-    
-}
-
-unsigned int Object::GetIndiciBufferData(std::vector<unsigned int>& index_buffer, unsigned int start)
-{
-    for(int i = 0; i < (int)m_Indices.size(); i++)
-        index_buffer.push_back( m_Indices.at(i) + start);
-
-    return m_Indices.size();   
-}
-
-
-
 //////////////////////////////////////////////////////////////////
 //  Debug Helpers
 //////////////////////////////////////////////////////////////////
@@ -209,37 +179,36 @@ const void Object::PrintAll()
 const void Object::PrintVertices()
 {
     Debugger<DEBUG_LEVEL>::Log_Console("Position Vertices:");
-    for(int i = 0; i < (int)m_Points.size(); i++)
+    for(int i = 0; i < (int)Vertices_.size(); i++)
     {
         Debugger<DEBUG_LEVEL>::Log_Console("v ", i, ": (",
-        m_Points.at(i).x, ",",  
-        m_Points.at(i).y, ",",  
-        m_Points.at(i).z, ")");
+        Vertices_.at(i).x, ",",  
+        Vertices_.at(i).y, ",",  
+        Vertices_.at(i).z, ")");
     }
 }
 
 const void Object::PrintTextureVertices()
 {
     Debugger<DEBUG_LEVEL>::Log_Console("Texture Vertices:");
-    for(int i = 0; i < (int)m_TexturePoints.size(); i++)
+    for(int i = 0; i < (int)TextureVerticies_.size(); i++)
     {
         Debugger<DEBUG_LEVEL>::Log_Console("vt ",i, ": (",
-        m_TexturePoints.at(i).x, ",",
-        m_TexturePoints.at(i).y, ")");  
-        
+        TextureVerticies_.at(i).x, ",",
+        TextureVerticies_.at(i).y, ")");   
     }
 }
 
 const void Object::PrintIndices()
 {
     Debugger<DEBUG_LEVEL>::Log_Console("Posistion Indicis:");
-    for(int i = 0; i < (int)m_Indices.size(); i++)
-        Debugger<DEBUG_LEVEL>::Log_Console(i, ": ", m_Indices.at(i));
+    for(int i = 0; i < (int)Indices_.size(); i++)
+        Debugger<DEBUG_LEVEL>::Log_Console(i, ": ", Indices_.at(i));
 }
 
 const void Object::PrintTextureIndices()
 {
     Debugger<DEBUG_LEVEL>::Log_Console("Texture Indicis:");
-        for(int i = 0; i < (int)m_TextureIndices.size(); i++)
-            Debugger<DEBUG_LEVEL>::Log_Console(i, ": ", m_TextureIndices.at(i));
+        for(int i = 0; i < (int)TextureIndices_.size(); i++)
+            Debugger<DEBUG_LEVEL>::Log_Console(i, ": ", TextureIndices_.at(i));
 }

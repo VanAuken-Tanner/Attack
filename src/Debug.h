@@ -8,6 +8,10 @@
 
 #define ASSERT(x) if(!(x)) Debugger<DEBUG_LEVEL>::Break(__FILE__, __LINE__);
 
+#define LOG_1(x) Debugger<DEBUG_LEVEL>::Log_Console(x);
+#define LOG_2(x,y) Debugger<DEBUG_LEVEL>::Log_Console(x,y);
+#define LOG_3(x,y,z) Debugger<DEBUG_LEVEL>::Log_Console(x,y,);
+
 //This is a macro used to make OpenGL calls and error check along the way.
 #define GL_CALL(x) Debugger<DEBUG_LEVEL>::ClearErrors();\
     x;\

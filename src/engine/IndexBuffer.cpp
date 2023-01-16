@@ -25,7 +25,6 @@ void IndexBuffer::Update(const unsigned int* data, unsigned int count)
 void IndexBuffer::Bind() const
 {
     GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
-    
 };
 
 void IndexBuffer::Unbind() const

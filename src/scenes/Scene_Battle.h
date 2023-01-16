@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "..\Layer.h"
+#include "..\GameObject.h"
 #include "..\engine\OrthographicCamera.h"
 
 #include "..\..\deps\external\vendor\glm\glm.hpp"
@@ -13,29 +14,30 @@ class Scene_Battle : public Scene
 private://member variables
 
     std::string bg_path_ = "res/art/Mountains.png";
+    std::string enemy_path_ = "res/art/red_square.png";
     std::string char_path_ = "res/art/Wizard.png";
     
     glm::vec3 Translation_;
     glm::vec3 CameraTranslation_;
+    float CameraRotation_;
     glm::vec3 CreateAtPos_;
-    
+
+    bool bSpawnEnemy_;
     
     Layer Background_;
-    Layer Characters_;
+    Layer Enemies_;
+    GameObject Player_;
 
-    bool bCreateObject_;
-    bool bUpdateBackground_;
-    bool bUpdateCharacters_;
+    Texture* BackgoundTexture_;
+    Texture* PlayerTexture_;
+    Texture* EnemyTexture_;
 
     Renderer Renderer_;
     Shader Shader_;
-    Texture* BackgoundTexture_;
-    Texture* CharacterTexture_;
-
-    std::vector<float> VertexData_;
-    std::vector<unsigned int> Indices_;
 
     VertexBufferLayout vb_layout_;
+    std::vector<float> VertexData_;
+    std::vector<unsigned int> Indices_;
 
     VertexArray VertexArray_;
     VertexBuffer VertexBuffer_;
@@ -49,16 +51,17 @@ public:
     Scene_Battle();
     ~Scene_Battle();
 
-    void OnUpdate(float deltaTine) override;
+    void OnUpdate(float deltaTime) override;
     void OnRender() override;
     void OnImGuiRender() override;
-    void OnHandleInput(GLFWwindow* window) override;
+    void OnHandleInput() override;
 
 private:
-    int texture_slots_[2] = { 0, 1 };
+    int texture_slots_[3] = { 0, 1, 2 };
 
+    void SetKeyActions();
     void UpdateBuffers();
-    void PrintDetails();
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
+    //debug helper
+    void PrintDetails();
 };

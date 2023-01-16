@@ -4,6 +4,8 @@
 #include <string>
 #include "..\deps\external\vendor\glm\glm.hpp"
 
+#include "Debug.h"
+
 
 struct Face
 {
@@ -13,26 +15,24 @@ struct Face
 class Object// : public GameObject
 {
 private:
-unsigned int textureId_; 
-    float m_xpos;
-    float m_ypos;
-    float m_zpos;
-    float m_scale;
+    unsigned int textureId_; 
+    std::string ObjFilepath_;
 
-    void UpdatePos();
-    void LoadObjectFromOBJ(std::string filepath);
+protected:
+    glm::vec3 Position_;
     
 public:
-    Object(std::string filepath, unsigned int tex_id, float xpos = 0, float ypos = 0, float zpos = 0, float scale = 1.0f);
+    Object(std::string filepath, unsigned int tex_id, glm::vec3 position);
     ~Object();
 
-    std::vector<glm::vec3> m_Points;
-    std::vector<glm::vec2> m_TexturePoints;
-    //std::vector<Face>  m_Faces; - not implemented
-    std::vector<unsigned int> m_Indices;
-    std::vector<unsigned int> m_TextureIndices;
+    std::vector<glm::vec3> Vertices_;
+    std::vector<glm::vec2> TextureVerticies_;
 
-    const unsigned int GetNumVerts();
+    std::vector<unsigned int> Indices_;
+    std::vector<unsigned int> TextureIndices_;
+
+    //void UpdatePos();
+    void LoadObjectFromOBJ(std::string& filepath);
 
     //debug helpers
     const void PrintAll();
@@ -44,7 +44,5 @@ public:
     //loads the vertex and index data into the buffers and returns the number added
     unsigned int GetVertexBufferData(std::vector<float>& vertex_buffer);
     unsigned int GetIndiciBufferData(std::vector<unsigned int>& index_buffer, unsigned int start);
-
-    void UpdatePosition(float xpos, float ypos, float zpos);
 };
 

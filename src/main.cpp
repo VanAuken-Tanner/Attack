@@ -3,8 +3,7 @@
 #include "Game.h"
 
 //TODO
-//Fix debugger using log level global
-//Fix object position updating
+// TODOs
 
 int main(int argc, char const *argv[])
 {

@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 
+
+
 //class for testing scenes only
 class Scene_Test : public Scene
 {
@@ -12,6 +14,6 @@ public:
     void OnUpdate(float deltaTine) override;
     void OnRender() override;
     void OnImGuiRender() override;
+    void OnHandleInput();
 private:
-    
 };
