@@ -180,6 +180,13 @@ void Game::Run()
             
         }
 
+        if(!InputHandler::GetIsKeyHandled(' '))
+        {
+            InputHandler::QueueAction(InputHandler::GetKeyAction(' '));
+            InputHandler::SetKeyHandled(' ');
+            
+        }
+
         if(InputHandler::GetActionCount() > 0)
         {
             InputHandler::ExecuteActions();        

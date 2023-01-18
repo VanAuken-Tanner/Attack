@@ -38,7 +38,9 @@ Scene_Battle::Scene_Battle()
 
 Scene_Battle::~Scene_Battle()
 {
-    //TODO Delete Layers & Textures
+    delete BackgoundTexture_;
+    delete PlayerTexture_;
+    delete EnemyTexture_;
 }
 
 void Scene_Battle::OnUpdate(float deltaTime)
@@ -157,7 +159,7 @@ void Scene_Battle::UpdateBuffers()
 
 
     // Fill our vertex buffer and index buffer with positions and indices
-    VertexBuffer_.Update(&VertexData_.at(0), (VertexData_.size() * 5 * sizeof(float))); // size = num posistions * num data in each pos * size of data
+    VertexBuffer_.Update(&VertexData_.at(0), (VertexData_.size() * vb_layout_.GetStride() * sizeof(float))); // size = count * stride * size of data(only using floats)
     IndexBuffer_.Update(&Indices_.at(0), Indices_.size());
     VertexArray_.AddBuffer(VertexBuffer_, vb_layout_); 
 }
