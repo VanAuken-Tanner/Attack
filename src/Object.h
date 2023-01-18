@@ -34,6 +34,9 @@ public:
     //void UpdatePos();
     void LoadObjectFromOBJ(std::string& filepath);
 
+    //doers
+    void Flip();
+
     //debug helpers
     const void PrintAll();
     const void PrintVertices();

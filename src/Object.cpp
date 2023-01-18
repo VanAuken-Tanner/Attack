@@ -161,6 +161,18 @@ void Object::LoadObjectFromOBJ(std::string& filepath)
     }    
 }
 
+
+void Object::Flip()
+{
+    glm::vec2 temp = TextureVerticies_.at(1);
+    TextureVerticies_.at(1) = TextureVerticies_.at(0);
+    TextureVerticies_.at(0) = temp;
+
+    temp = TextureVerticies_.at(3);
+    TextureVerticies_.at(3) = TextureVerticies_.at(2);
+    TextureVerticies_.at(2) = temp;
+}
+
 //////////////////////////////////////////////////////////////////
 //  Debug Helpers
 //////////////////////////////////////////////////////////////////

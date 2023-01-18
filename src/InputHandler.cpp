@@ -25,6 +25,14 @@ void InputHandler::key_callback(GLFWwindow* window, int key, int scancode, int a
             SetKeyState('s', true);
         if (key == GLFW_KEY_D && action == GLFW_PRESS)
             SetKeyState('d', true);
+        if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+            SetKeyState('q', true);
+        if (key == GLFW_KEY_E && action == GLFW_PRESS)
+            SetKeyState('e', true);
+        if (key == GLFW_KEY_R && action == GLFW_PRESS)
+            SetKeyState('r', true);
+        if (key == GLFW_KEY_F && action == GLFW_PRESS)
+            SetKeyState('f', true);
 
         if (key == GLFW_KEY_W && action == GLFW_RELEASE)
             SetKeyState('w', false);
@@ -34,6 +42,14 @@ void InputHandler::key_callback(GLFWwindow* window, int key, int scancode, int a
             SetKeyState('s', false);
         if (key == GLFW_KEY_D && action == GLFW_RELEASE)
             SetKeyState('d', false);
+        if (key == GLFW_KEY_Q && action == GLFW_RELEASE)
+            SetKeyState('q', false);
+        if (key == GLFW_KEY_E && action == GLFW_RELEASE)
+            SetKeyState('e', false);
+        if (key == GLFW_KEY_R && action == GLFW_RELEASE)
+            SetKeyState('r', false);
+        if (key == GLFW_KEY_F && action == GLFW_RELEASE)
+            SetKeyState('f', false);
 
         if(key == GLFW_KEY_SPACE && action == GLFW_PRESS)
             SetKeyState(' ', false);

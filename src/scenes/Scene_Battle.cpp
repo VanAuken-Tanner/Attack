@@ -4,14 +4,12 @@
 #include <string>
 #include <vector>
 
-#define BG_LAYER        0
-#define PLAYER_LAYER    1
-#define ENEMY_LAYER     2
 
 Scene_Battle::Scene_Battle()
     :   Translation_(0, 0, 0), CameraTranslation_(0, 0, 0), CreateAtPos_(0,0,0), 
         Background_(BG_LAYER),
         Enemies_(ENEMY_LAYER), bSpawnEnemy_(false),
+        Projectiles_(MISSLE_LAYER),
         Player_("res/models/Character.obj", PLAYER_LAYER, {-2.0f, -1.0f, 0.0f}, { 0.0f, 0.0f, 0.0f }, 3),
         Camera_(-8.0f, 8.0f, -4.5f, 4.5f) 
 {
@@ -25,8 +23,9 @@ Scene_Battle::Scene_Battle()
     BackgoundTexture_ = new Texture(bg_path_, BG_LAYER);
     PlayerTexture_ = new Texture(char_path_, PLAYER_LAYER);
     EnemyTexture_ = new Texture(enemy_path_, ENEMY_LAYER);
+    ProjectileTexture_ = new Texture(projectile_path_, MISSLE_LAYER);
     
-    Background_.Objects_.push_back(new Object("res/models/Background.obj", BG_LAYER, {0.0f, 0.0f, 0.0f}));
+    Background_.Objects_.push_back(new GameObject("res/models/Background.obj", BG_LAYER, {0.0f, 0.0f, 0.0f}));
 
     //Setup our Shader
     std::string sfilepath = "invalid filepath";
@@ -41,6 +40,9 @@ Scene_Battle::~Scene_Battle()
     delete BackgoundTexture_;
     delete PlayerTexture_;
     delete EnemyTexture_;
+    delete ProjectileTexture_;
+
+
 }
 
 void Scene_Battle::OnUpdate(float deltaTime)
@@ -48,10 +50,14 @@ void Scene_Battle::OnUpdate(float deltaTime)
     Player_.Update(deltaTime);
     if(bSpawnEnemy_)
     {
-        Enemies_.Objects_.push_back(new Object("res/models/Character.obj", ENEMY_LAYER, CreateAtPos_));
+        Enemies_.Objects_.push_back(new GameObject("res/models/Character.obj", ENEMY_LAYER, CreateAtPos_));
         bSpawnEnemy_ = false;
     }
+    for (GameObject* missle : Projectiles_.Objects_)
+        missle->Update(deltaTime);
+    //Projectiles_.Objects_.at(0)->Update(deltaTime);
 
+    Camera_.SetPosition(CameraTranslation_);
     Camera_.SetRotation(CameraRotation_);
     UpdateBuffers();
 }
@@ -59,12 +65,12 @@ void Scene_Battle::OnUpdate(float deltaTime)
 void Scene_Battle::OnRender()
 {
     ModelMatrix_ = glm::translate(glm::mat4(1.0f), Translation_);
-    Camera_.SetPosition(CameraTranslation_);
     Model_view_projection_matrix_ = Camera_.GetProjViewMatrix() * ModelMatrix_;
 
     BackgoundTexture_->Bind();
     PlayerTexture_->Bind();
     EnemyTexture_->Bind();
+    ProjectileTexture_->Bind();
     
     Shader_.Bind();
     
@@ -79,18 +85,44 @@ void Scene_Battle::OnImGuiRender()
     ImGui::Begin("Battle Scene Controls");
     Scene::OnImGuiRender();
 
-    // this wants a float arrary so we pass it the address of our first pos in pos array, which is x
-    ImGui::SliderFloat3("Translation A", &Translation_.x, -10.0f, 10.f);
-    ImGui::SliderFloat3("Camera Position", &CameraTranslation_.x, -10.0f, 10.f);
-    ImGui::SliderFloat("Camera Rotation", &CameraRotation_, 0.0f, 10.0f);
+    // // this wants a float arrary so we pass it the address of our first pos in pos array, which is x
+    // ImGui::SliderFloat3("Translation A", &Translation_.x, -10.0f, 10.f);
+    // ImGui::SliderFloat3("Camera Position", &CameraTranslation_.x, -10.0f, 10.f);
+    // ImGui::SliderFloat("Camera Rotation", &CameraRotation_, 0.0f, 10.0f);
+
+    //ImGui::Separator();
+
+
+    ImGui::BeginGroup();
+
+    if(ImGui::Button("Spawn Horde"))
+        SpawnWave();
+        
+    if(ImGui::Button("Clear Horde"))
+        ClearWave();
 
     ImGui::Separator();
-    ImGui::BeginGroup();
-    ImGui::SliderFloat3("Position: (x,y,z)", &CreateAtPos_.x, -8.0f, 8.0f);
+    
     bSpawnEnemy_ = ImGui::Button("Spawn Enemy");
+    ImGui::SliderFloat3("Position: (x,y,z)", &CreateAtPos_.x, -8.0f, 8.0f);
+
     ImGui::EndGroup();
 
     ImGui::End();
+}
+
+void Scene_Battle::SpawnWave()
+{
+    int num_goblins_ = RNG::GetRandInt(2,6);
+    std::vector<glm::vec3> positions;
+
+    LOG_2("Num goblins = ", num_goblins_);
+
+    for(int i = 0; i < num_goblins_; i ++)
+        positions.push_back({RNG::GetRandFloat(1.0f,6.0f), RNG::GetRandFloat(-4.0f,1.0f), 0});
+
+    for(int i = 0; i < positions.size(); i++)
+        Enemies_.Objects_.push_back(new GameObject("res/models/Character.obj", ENEMY_LAYER, positions.at(i)));
 }
 
 void Scene_Battle::OnHandleInput()
@@ -123,13 +155,19 @@ void Scene_Battle::OnHandleInput()
             
         }
 
+        if(!InputHandler::GetIsKeyHandled('e'))
+        {
+            InputHandler::QueueAction(InputHandler::GetKeyAction('e'));
+            InputHandler::SetKeyHandled('e');
+            
+        }
+
         if(InputHandler::GetActionCount() > 0)
         {
             InputHandler::ExecuteActions();        
             //ASSERT(false);
         }
 }
-
 
 void Scene_Battle::UpdateBuffers()
 {
@@ -157,6 +195,15 @@ void Scene_Battle::UpdateBuffers()
         }
     }
 
+    if(Projectiles_.Objects_.size() > 0)
+    {
+        for (int j = 0; j < (int)Projectiles_.Objects_.size(); j++)
+        {
+            Projectiles_.Objects_.at(j)->GetIndiciBufferData(Indices_, curVerticiCount == 0 ? 0 : curVerticiCount);//+0 +4 +8 +12(unsigned int)(m_Positions.size()/5)-1
+            curVerticiCount += Projectiles_.Objects_.at(j)->GetVertexBufferData(VertexData_);
+        }
+    }
+
 
     // Fill our vertex buffer and index buffer with positions and indices
     VertexBuffer_.Update(&VertexData_.at(0), (VertexData_.size() * vb_layout_.GetStride() * sizeof(float))); // size = count * stride * size of data(only using floats)
@@ -166,6 +213,14 @@ void Scene_Battle::UpdateBuffers()
 
 void Scene_Battle::SetKeyActions()
 {
+    InputHandler::AddKeyAction<'e'>([this](bool pressed) {
+        if(pressed)
+        {
+            LOG_1("Spawning missle...")
+            Projectiles_.Objects_.push_back(new GameObject("res/models/Missle.obj", MISSLE_LAYER, Player_.GetMissleSpawnPoint(),{ 1.0f, 0.0f, 0.0f }, 4));
+        }
+    });
+
     InputHandler::AddKeyAction<'w'>( [this](bool pressed) { 
         if(pressed)
             Player_.AdjustVelocity({0.0f, 1.0f, 0.0f});
