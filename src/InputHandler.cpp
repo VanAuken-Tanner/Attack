@@ -2,15 +2,13 @@
 
 #include "Globals.h"
 
-void InputHandler::SetKeyState(char symbol, bool state) 
+
+void InputHandler::RegisterKeyEvent(int code_, bool state) 
 { 
-    KeyActions[symbol].key_.pressed_ = state; 
-    KeyActions[symbol].key_.handled_ = false;
+    KeyActions_[code_].key_.pressed_ = state; 
+    KeyActions_[code_].key_.handled_ = false;
+    ActionQueue_.push_back(code_);
 }
-
-// template<char sym>
-// void InputHandler::AddKeyAction(Action action)
-
 
 void InputHandler::key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -18,46 +16,49 @@ void InputHandler::key_callback(GLFWwindow* window, int key, int scancode, int a
             g_gameState = GameState::Exiting;
 
         if (key == GLFW_KEY_W && action == GLFW_PRESS)
-            SetKeyState('w', true); 
+            RegisterKeyEvent(GLFW_KEY_W, true); 
         if (key == GLFW_KEY_A && action == GLFW_PRESS)
-            SetKeyState('a', true);
+            RegisterKeyEvent(GLFW_KEY_A, true);
         if (key == GLFW_KEY_S && action == GLFW_PRESS)
-            SetKeyState('s', true);
+            RegisterKeyEvent(GLFW_KEY_S, true);
         if (key == GLFW_KEY_D && action == GLFW_PRESS)
-            SetKeyState('d', true);
+            RegisterKeyEvent(GLFW_KEY_D, true);
         if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-            SetKeyState('q', true);
+            RegisterKeyEvent(GLFW_KEY_Q, true);
         if (key == GLFW_KEY_E && action == GLFW_PRESS)
-            SetKeyState('e', true);
+            RegisterKeyEvent(GLFW_KEY_E, true);
         if (key == GLFW_KEY_R && action == GLFW_PRESS)
-            SetKeyState('r', true);
+            RegisterKeyEvent(GLFW_KEY_E, true);
         if (key == GLFW_KEY_F && action == GLFW_PRESS)
-            SetKeyState('f', true);
+            RegisterKeyEvent(GLFW_KEY_F, true);
 
         if (key == GLFW_KEY_W && action == GLFW_RELEASE)
-            SetKeyState('w', false);
+            RegisterKeyEvent(GLFW_KEY_W, false);
         if (key == GLFW_KEY_A && action == GLFW_RELEASE)
-            SetKeyState('a', false);
+            RegisterKeyEvent(GLFW_KEY_A, false);
         if (key == GLFW_KEY_S && action == GLFW_RELEASE)
-            SetKeyState('s', false);
+            RegisterKeyEvent(GLFW_KEY_S, false);
         if (key == GLFW_KEY_D && action == GLFW_RELEASE)
-            SetKeyState('d', false);
+            RegisterKeyEvent(GLFW_KEY_D, false);
         if (key == GLFW_KEY_Q && action == GLFW_RELEASE)
-            SetKeyState('q', false);
+            RegisterKeyEvent(GLFW_KEY_Q, false);
         if (key == GLFW_KEY_E && action == GLFW_RELEASE)
-            SetKeyState('e', false);
+            RegisterKeyEvent(GLFW_KEY_E, false);
         if (key == GLFW_KEY_R && action == GLFW_RELEASE)
-            SetKeyState('r', false);
+            RegisterKeyEvent(GLFW_KEY_R, false);
         if (key == GLFW_KEY_F && action == GLFW_RELEASE)
-            SetKeyState('f', false);
+            RegisterKeyEvent(GLFW_KEY_F, false);
 
         if(key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-            SetKeyState(' ', false);
+            RegisterKeyEvent(GLFW_KEY_SPACE, false);
 }
 
-void InputHandler::ExecuteActions() 
+void InputHandler::HandleKeyEvents() 
 {
-    for(int i = 0; i < (int)ActionQueue.size(); i++)
-        ActionQueue.at(i).action_(InputHandler::GetKeyState(ActionQueue.at(i).key_.symbol_));
-    ActionQueue.clear();
+    for(int i = 0; i < (int)ActionQueue_.size(); i++)
+    {
+        KeyActions_[ActionQueue_.at(i)].FireAction();
+    }
+    ActionQueue_.clear();
 }
+

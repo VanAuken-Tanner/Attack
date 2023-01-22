@@ -65,50 +65,25 @@ void Game::Run()
     pSceneMenu->RegisterTest<Scene_Test>("Scene Test");
     pSceneMenu->RegisterTest<Scene_Clear>("Clear Color");
     pSceneMenu->RegisterTest<Scene_Battle>("Battle Scene");
+    LOG_1("Scenes_Regeristerd.");
+    
+    //The beggining of time!
+    double curFrame, deltaTime, prevFrame;
+
+    //Begin InputHandling
+
+    InputHandler::AddKeyAction<GLFW_KEY_SPACE>( [](bool pressed) { 
+        std::cout << "space key pressed." << std::endl;
+        ASSERT(false); 
+    });
+    LOG_1("Inputs Added...");
+
 
     if(g_gameState != GameState::Exiting)
     {
         Debugger<DEBUG_LEVEL>::Log_Console("Setting GameState = Running...\nBeggining main game loop.");
         g_gameState = GameState::Running;
     }
-
-    //https://stackoverflow.com/questions/12574565/moving-object-stutters-using-delta-time-to-unify-speed
-    //#define TAU (M_PI * 2.0)
-    // a += deltaTime * speed;
-    // // Optional, keep the cycle bounded to reduce precision errors
-    // // if you plan to leave this running for a long time...
-    // if( a > TAU ) a -= TAU;
-    // x = sin( a ) * 0.8f;
-    // y = cos( a ) * 0.8f;
-
-
-    //The beggining of time!
-    double curFrame, deltaTime, prevFrame;
-
-    //Begin InputHandling
-    
-
-    InputHandler::AddKeyAction<'w'>([](bool pressed) { 
-        std::cout << "w key: Pressed!!" << std::endl; 
-    });
-
-    InputHandler::AddKeyAction<'a'>([](bool pressed) {
-        std::cout << "a key: Pressed!!" << std::endl;
-
-    });
-
-    InputHandler::AddKeyAction<'s'>([](bool pressed) { 
-        std::cout << "s key: Pressed!!" << std::endl; 
-    });
-
-    InputHandler::AddKeyAction<'d'>( [](bool pressed) { 
-        std::cout << "d key: Pressed!!" << std::endl; 
-    });
-
-    InputHandler::AddKeyAction<' '>( [](bool pressed) { 
-        std::cout << "space key pressed." << std::endl;
-        ASSERT(false); 
-    });
 
     //Main Game Loop
     /* Loop until the user closes the window_ */
@@ -151,47 +126,8 @@ void Game::Run()
         //Gets and Sets KeyStates
         GL_CALL(glfwSetKeyCallback(window_, InputHandler::key_callback)); 
 
-
-        if(!InputHandler::GetIsKeyHandled('w'))
-        {
-            InputHandler::QueueAction(InputHandler::GetKeyAction('w'));
-            InputHandler::SetKeyHandled('w');
-            
-        }
-
-        if(!InputHandler::GetIsKeyHandled('a'))
-        {
-            InputHandler::QueueAction(InputHandler::GetKeyAction('a'));
-            InputHandler::SetKeyHandled('a');
-            
-        }
-
-        if(!InputHandler::GetIsKeyHandled('s'))
-        {
-            InputHandler::QueueAction(InputHandler::GetKeyAction('s'));
-            InputHandler::SetKeyHandled('s');
-            
-        }
-
-        if(!InputHandler::GetIsKeyHandled('d'))
-        {
-            InputHandler::QueueAction(InputHandler::GetKeyAction('d'));
-            InputHandler::SetKeyHandled('d');
-            
-        }
-
-        if(!InputHandler::GetIsKeyHandled(' '))
-        {
-            InputHandler::QueueAction(InputHandler::GetKeyAction(' '));
-            InputHandler::SetKeyHandled(' ');
-            
-        }
-
-        if(InputHandler::GetActionCount() > 0)
-        {
-            InputHandler::ExecuteActions();        
-            //ASSERT(false);
-        }
+        //Handle any keys not called by the scene
+        InputHandler::HandleKeyEvents();       
              
     }
 

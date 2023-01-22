@@ -17,6 +17,7 @@
     x;\
     ASSERT(!Debugger<DEBUG_LEVEL>::CheckErrors(__FILE__, __LINE__ ))
 
+
 template<int log_level>
 class Debugger
 {

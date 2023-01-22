@@ -20,22 +20,25 @@ private:
 
 protected:
     glm::vec3 Position_;
+    glm::vec2 TexturePosition_;
     
 public:
-    Object(std::string filepath, unsigned int tex_id, glm::vec3 position);
+    Object(std::string filepath, unsigned int tex_id, glm::vec3 position, glm::vec2 texture_offset);
     ~Object();
 
+private:
     std::vector<glm::vec3> Vertices_;
     std::vector<glm::vec2> TextureVerticies_;
 
     std::vector<unsigned int> Indices_;
     std::vector<unsigned int> TextureIndices_;
 
-    //void UpdatePos();
-    void LoadObjectFromOBJ(std::string& filepath);
-
+    bool LoadObjectFromOBJ(std::string& filepath);
+public:
     //doers
     void Flip();
+    void SetTextureVerticiOffset(glm::vec2 offset) { TexturePosition_ = offset; }
+
 
     //debug helpers
     const void PrintAll();

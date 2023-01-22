@@ -29,6 +29,11 @@ public:
     virtual void OnHandleInput() {}
     bool Exiting() { return exit_; }
 
+    // // this wants a float arrary so we pass it the address of our first pos in pos array, which is x
+    // ImGui::SliderFloat3("Translation A", &Translation_.x, -10.0f, 10.f);
+    // ImGui::SliderFloat3("Camera Position", &CameraTranslation_.x, -10.0f, 10.f);
+    // ImGui::SliderFloat("Camera Rotation", &CameraRotation_, 0.0f, 10.0f);
+
 protected:
     Renderer m_Renderer;
 };

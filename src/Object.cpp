@@ -6,11 +6,16 @@
 
 
 
-Object::Object(std::string filepath, unsigned int tex_id, glm::vec3 position)
+Object::Object(std::string filepath, unsigned int tex_id, glm::vec3 position, glm::vec2 texture_offset)
     :   ObjFilepath_(filepath), textureId_(tex_id), Position_(position)
 {
     Debugger<DEBUG_LEVEL>::Log_Console("Constructing Object: ", filepath);
-    LoadObjectFromOBJ(filepath);
+    ASSERT(LoadObjectFromOBJ(filepath));
+    TexturePosition_ = {(texture_offset.x) / 640, 0.0f };
+    LOG_2("Position x: ", Position_.x);
+    LOG_2("Position y: ", Position_.y);
+    LOG_2("Position z: ", Position_.z);
+    
     PrintAll();
 }
 
@@ -26,8 +31,8 @@ unsigned int Object::GetVertexBufferData(std::vector<float>& vertex_buffer)
         vertex_buffer.push_back(Vertices_.at(i).y + Position_.y);
         vertex_buffer.push_back(Vertices_.at(i).z + Position_.z);
 
-        vertex_buffer.push_back(TextureVerticies_.at(i).x);
-        vertex_buffer.push_back(TextureVerticies_.at(i).y);
+        vertex_buffer.push_back(TextureVerticies_.at(i).x + TexturePosition_.x);
+        vertex_buffer.push_back(TextureVerticies_.at(i).y + TexturePosition_.y);
 
         vertex_buffer.push_back(textureId_);
 
@@ -45,11 +50,13 @@ unsigned int Object::GetIndiciBufferData(std::vector<unsigned int>& index_buffer
 }
 
 //Reads an obj file line by line to fill our vertices, texture vertices, and indices
-void Object::LoadObjectFromOBJ(std::string& filepath)
+bool Object::LoadObjectFromOBJ(std::string& filepath)
 {
 
     std::ifstream inFile (filepath);
     std::string line;
+
+   
 
     while( getline(inFile, line) ) 
     {
@@ -158,7 +165,8 @@ void Object::LoadObjectFromOBJ(std::string& filepath)
                 
             }
         }
-    }    
+    }   
+    return true; 
 }
 
 
@@ -171,6 +179,7 @@ void Object::Flip()
     temp = TextureVerticies_.at(3);
     TextureVerticies_.at(3) = TextureVerticies_.at(2);
     TextureVerticies_.at(2) = temp;
+
 }
 
 //////////////////////////////////////////////////////////////////
