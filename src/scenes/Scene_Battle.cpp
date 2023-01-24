@@ -7,10 +7,12 @@
 
 Scene_Battle::Scene_Battle()
     :   Translation_(0, 0, 0), CameraTranslation_(0, 0, 0), CameraRotation_(0), CreateAtPos_(0,0,0), 
-        Background_(BG_LAYER),
-        Enemies_(ENEMY_LAYER), bSpawnEnemy_(false),
-        Projectiles_(MISSLE_LAYER),
-        Player_("res/models/Character.obj", PLAYER_LAYER, {-2.0f, -1.0f, 0.0f}, { 0.0f, 0.0f}, { 0.0f, 0.0f, 0.0f }, 3),
+        bSpawnEnemy_(false),
+        Background_(TEXTURE_LAYER::BACKGROUND),
+        Enemies_(TEXTURE_LAYER::ENEMY),
+        Projectiles_(TEXTURE_LAYER::MISSLE),
+        Player_("res/models/Character.obj", TEXTURE_LAYER::PLAYER, {-2.0f, -1.0f, 0.0f}, { 0.0f, 0.0f}, { 0.0f, 0.0f, 0.0f }, 3),
+        Banner_(),
         Camera_(g_s_left, g_s_right, g_s_bottom, g_s_top) 
 {
     Debugger<DEBUG_LEVEL>::Log_Console("!!!Constructing Battle!!!");
@@ -19,13 +21,11 @@ Scene_Battle::Scene_Battle()
     vb_layout_.Push<float>(2);//Texture Coords
     vb_layout_.Push<float>(1);//Texture Slot
     
-    //BackgoundTexture_ = new Texture(bg_path_, BG_LAYER);
-    BackgoundTexture_ = new Texture(bg_path_, BG_LAYER);
-    PlayerTexture_ = new Texture(char_path_, PLAYER_LAYER);
-    EnemyTexture_ = new Texture(enemy_path_, ENEMY_LAYER);
-    ProjectileTexture_ = new Texture(projectile_path_, MISSLE_LAYER);
-    
-    Background_.Objects_.push_back(new GameObject("res/models/Background.obj", BG_LAYER, {0.0f, 0.0f, 0.0f}));
+    Background_.Objects_.push_back(new GameObject("res/models/Background.obj", TEXTURE_LAYER::BACKGROUND, {0.0f, 0.0f, 0.0f}));
+
+    std::string msg = "abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnoprstuvwxyz0123456789";
+    //std::string msg = "attack!..";
+    Banner_.SetText(msg);
 
     //Setup our Shader
     std::string sfilepath = "invalid filepath";
@@ -37,11 +37,6 @@ Scene_Battle::Scene_Battle()
 
 Scene_Battle::~Scene_Battle()
 {
-    delete BackgoundTexture_;
-    delete PlayerTexture_;
-    delete EnemyTexture_;
-    delete ProjectileTexture_;
-
 
 }
 
@@ -51,7 +46,7 @@ void Scene_Battle::OnUpdate(float deltaTime)
 
     if(bSpawnEnemy_)
     {
-        Enemies_.Objects_.push_back(new GameObject("res/models/Character.obj", ENEMY_LAYER, CreateAtPos_));
+        Enemies_.Objects_.push_back(new GameObject("res/models/Character.obj", TEXTURE_LAYER::ENEMY, CreateAtPos_));
         bSpawnEnemy_ = false;
     }
 
@@ -68,14 +63,11 @@ void Scene_Battle::OnRender()
     ModelMatrix_ = glm::translate(glm::mat4(1.0f), Translation_);
     Model_view_projection_matrix_ = Camera_.GetProjViewMatrix() * ModelMatrix_;
 
-    BackgoundTexture_->Bind();
-    PlayerTexture_->Bind();
-    EnemyTexture_->Bind();
-    ProjectileTexture_->Bind();
+    TextureManager_.BindTextures();
     
     Shader_.Bind();
     
-    Shader_.SetUniform1iv("u_Textures", texture_slots_, text_slot_count_);
+    Shader_.SetUniform1iv("u_Textures", TextureManager_.GetTextureSlots(), TextureManager_.GetNumTextureSlots());
     Shader_.SetUniformMat4fv("u_ModelViewProjection", Model_view_projection_matrix_);
     
     Renderer_.Draw(VertexArray_, IndexBuffer_, Shader_);
@@ -120,7 +112,7 @@ void Scene_Battle::SpawnWave()
         positions.push_back({RNG::GetRandFloat(1.0f,6.0f), RNG::GetRandFloat(-4.0f,1.0f), 0});
 
     for(int i = 0; i < (int)positions.size(); i++)
-        Enemies_.Objects_.push_back(new GameObject("res/models/Character.obj", ENEMY_LAYER, positions.at(i)));
+        Enemies_.Objects_.push_back(new GameObject("res/models/Character.obj", TEXTURE_LAYER::ENEMY, positions.at(i)));
 }
 
 void Scene_Battle::OnHandleInput()
@@ -163,6 +155,8 @@ void Scene_Battle::UpdateBuffers()
         }
     }
 
+    Banner_.UpdateBufferData(VertexData_, Indices_, curVerticiCount);
+
 
     // Fill our vertex buffer and index buffer with positions and indices
     VertexBuffer_.Update(&VertexData_.at(0), (VertexData_.size() * vb_layout_.GetStride() * sizeof(float))); // size = count * stride * size of data(only using floats)
@@ -176,7 +170,7 @@ void Scene_Battle::SetKeyActions()
         if(pressed)
         {
             LOG_1("Spawning missle...")
-            Projectiles_.Objects_.push_back(new GameObject("res/models/Missle.obj", MISSLE_LAYER, Player_.GetMissleSpawnPoint(), {0.0f, 0.0f}, { 1.0f, 0.0f, 0.0f }, 4));
+            Projectiles_.Objects_.push_back(new GameObject("res/models/Missle.obj", TEXTURE_LAYER::MISSLE, Player_.GetMissleSpawnPoint(), {0.0f, 0.0f}, { 1.0f, 0.0f, 0.0f }, 4));
         }
     });
 

@@ -9,7 +9,7 @@
 
 #include "Renderer.h"
 
-Texture::Texture(std::string& filepath, int slot)
+Texture::Texture(std::string& filepath, TEXTURE_LAYER slot)
     :   Filepath_(filepath), slot_(slot),
         RendererID_(0), LocalBuffer_(nullptr),
         Width_(0), Height_(0), BPP_(0)

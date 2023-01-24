@@ -3,16 +3,14 @@
 #include "Scene.h"
 
 #include "..\Layer.h"
+#include "..\Banner.h"
 #include "..\GameObject.h"
 #include "..\engine\OrthographicCamera.h"
 
+#include "..\engine\TextureManager.h"
+
 #include "..\..\deps\external\vendor\glm\glm.hpp"
 #include "..\..\deps\external\vendor\glm\gtc\matrix_transform.hpp"
-
-#define BG_LAYER        0
-#define PLAYER_LAYER    1
-#define ENEMY_LAYER     2
-#define MISSLE_LAYER    3
 
 #include <random>
 
@@ -64,21 +62,11 @@ private://member variables
     Layer Enemies_;
     Layer Projectiles_;
     GameObject Player_;
+    Banner Banner_;
 
-    std::string bg_path_ = "res/art/Mountains.png";
-    std::string enemy_path_ = "res/art/goblin.png";
-    std::string char_path_ = "res/art/Wizard.png";
-    std::string projectile_path_ = "res/art/blue_square_25a.png";
-
-    Texture* BackgoundTexture_;
-    Texture* PlayerTexture_;
-    Texture* EnemyTexture_;
-    Texture* ProjectileTexture_;
-    const int text_slot_count_ = 4;
-    int texture_slots_[4] = {0,1,2,3};
-
-    Renderer Renderer_;
+    TextureManager TextureManager_;
     Shader Shader_;
+    Renderer Renderer_;
 
     std::vector<float> VertexData_;
     std::vector<unsigned int> Indices_;
@@ -96,7 +84,7 @@ private://member variables
     void UpdateBuffers();
 
     void SpawnWave();
-    void ClearWave() { Enemies_.Objects_.clear(); }
+    inline void ClearWave() { Enemies_.Objects_.clear(); }
 
     //debug helper
     void PrintDetails();

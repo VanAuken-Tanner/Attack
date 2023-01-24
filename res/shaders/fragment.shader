@@ -6,7 +6,7 @@ in vec2 v_TextureCoord;
 in float v_TextureId;
 
 uniform vec4 u_Color;//a color var no longer used
-uniform sampler2D u_Textures[4];//texture loaded into cpu from file path
+uniform sampler2D u_Textures[6];//texture loaded into cpu from file path
 
 
 void main()

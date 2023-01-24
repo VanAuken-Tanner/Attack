@@ -15,6 +15,7 @@ public:
     ~Layer();
 
     unsigned int TextureID_;
+    unsigned int TextureID_BANNER_;
     
     std::vector<GameObject*> Objects_;
 

@@ -4,6 +4,7 @@
 
 //TODO
 
+// fix test scene - removed banner
 // Major Reafactoring
 // implement object destruction
 // obj & texture vertex - realize

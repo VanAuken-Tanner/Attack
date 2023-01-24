@@ -18,6 +18,8 @@ Scene_Test::Scene_Test()
     Shader_.Bind();
     Shader_.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
     
+    std::string msg = "hello.dom..how.are.you?";
+    Banner_.SetText(msg);
 
 }
 
@@ -41,7 +43,7 @@ void Scene_Test::OnRender()
     model_matrix_ = glm::translate(glm::mat4(1.0f), Translation_);
     Model_view_projection_matrix_ = Camera_.GetProjViewMatrix() * model_matrix_;
 
-    Banner_.BindTextures();
+    ;
 
     Shader_.Bind();
     
@@ -69,7 +71,7 @@ void Scene_Test::UpdateBuffers()
     vertices_.clear();
     indices_.clear();
     
-    Banner_.UpdateBufferData(vertices_, indices_, IndiciPos);
+    //Banner_.UpdateBufferData(vertices_, indices_, IndiciPos);
 
     // LOG_1("OnUpdatedBuffers...");
     // LOG_2("Vertices: ", vertices_.size());
