@@ -94,11 +94,14 @@ void Game::Run()
             pCurrentScene->OnImGuiRender();
             pCurrentScene->OnHandleInput();
 
-            if(pCurrentScene->Exiting())
+            if(pCurrentScene->ExitingScene())
             {
                 delete pCurrentScene;
                 pCurrentScene = pSceneMenu;
             }
+
+            if(pCurrentScene->ClosingGame())
+                game_state_ = GameState::Exiting;
         }
 
         ImGui::Render();

@@ -1,5 +1,11 @@
 @echo off
 
-del .\build\* /Q
-
-echo Build Directory Cleaned.
+IF EXIST ".\build\Attack!.exe" (
+    echo Cleaning...
+    del .\build\* /Q
+    IF NOT EXIST ".\build\Attack!.exe" (
+        echo Clean Success!
+    )
+) ELSE (
+    echo Nothing to Clean.
+)

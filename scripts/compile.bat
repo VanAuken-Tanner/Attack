@@ -34,4 +34,8 @@ IF "%debug%"=="d" (
     
 )  
 
-ECHO Compiling Complete.
+if exist ".\build\Attack!.exe" (
+    echo Compiling Success!
+) else {
+    echo Failed to compile.
+}

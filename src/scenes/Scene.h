@@ -16,10 +16,13 @@
 
 class Scene
 {
-private:
-    bool exit_;
+private: 
 
 protected:
+    bool exit_scene_;
+    bool close_game_;
+    Renderer m_Renderer;
+
     float screen_left_ = -8.0f;
     float screen_right_ = 8.0f;
     float screen_bottom_ = -4.5f;
@@ -30,22 +33,16 @@ protected:
     float screen_ob_top_ = 9.0f;
     
 public:
-    Scene(/* args */) { exit_ = false; }
+    Scene(/* args */) { exit_scene_ = false; close_game_ = false; }
     virtual ~Scene() {}
 
     virtual void OnUpdate(float deltaTime) {}
     virtual void OnRender() {}
     virtual void OnImGuiRender();
     virtual void OnHandleInput() {}
-    bool Exiting() { return exit_; }
-
-    // // this wants a float arrary so we pass it the address of our first pos in pos array, which is x
-    // ImGui::SliderFloat3("Translation A", &Translation_.x, -10.0f, 10.f);
-    // ImGui::SliderFloat3("Camera Position", &CameraTranslation_.x, -10.0f, 10.f);
-    // ImGui::SliderFloat("Camera Rotation", &CameraRotation_, 0.0f, 10.0f);
-
-protected:
-    Renderer m_Renderer;
+    bool ExitingScene() { return exit_scene_; }
+    bool ClosingGame() {return close_game_; }
+    
 };
 
 

@@ -4,6 +4,6 @@ void Scene::OnImGuiRender()
 {
     if(ImGui::Button("<- Back"))
     {
-        exit_ = true;
+        exit_scene_ = true;
     }
 }
