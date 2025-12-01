@@ -1,6 +1,5 @@
 #include "InputHandler.h"
 
-
 void InputHandler::RegisterKeyEvent(int code_, bool state) 
 { 
     KeyActions_[code_].key_.pressed_ = state; 

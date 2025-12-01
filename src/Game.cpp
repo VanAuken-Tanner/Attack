@@ -117,8 +117,8 @@ void Game::Run()
         GL_CALL(glfwSetKeyCallback(window_, InputHandler::key_callback)); 
 
         //Handle any keys not called by the scene
-        InputHandler::HandleKeyEvents();       
-             
+        InputHandler::HandleKeyEvents();   
+            
     }
 
     if(pCurrentScene != pSceneMenu)
