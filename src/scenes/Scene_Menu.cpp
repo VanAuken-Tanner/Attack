@@ -31,8 +31,7 @@ void Scene_Menu::OnImGuiRender()
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         if(ImGui::Button("Exit Application"))
         {
-            Debugger<DEBUG_LEVEL>::Log_Console("Exit Application Button Pressed and Exiting");
-            g_gameState = GameState::Exiting;
+           //TODO - figure out how to tell the game to exit
         }
 
         ImGui::End();

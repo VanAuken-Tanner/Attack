@@ -1,25 +1,24 @@
 #include "Scene_Test.h"
 
 #include "..\Debug.h"
-#include "..\Globals.h"
-
-
 
 Scene_Test::Scene_Test()
-    :   Translation_(0, 0, 0),
-        Camera_(g_s_left, g_s_right, g_s_bottom, g_s_top)
+    :   Translation_(0, 0, 0), CameraTranslation_(0, 0, 0), CameraRotation_(0), CreateAtPos_(0,0,0),
+        Banner_(),
+        Player_("res/models/Character.obj", TEXTURE_LAYER::PLAYER, {-2.0f, -1.0f, 0.0f}, { 0.0f, 0.0f}, { 0.0f, 0.0f, 0.0f }, 3),
+        Camera_(screen_left_, screen_right_, screen_bottom_, screen_top_)
 {
-    Debugger<DEBUG_LEVEL>::Log_Console("Constructing Testing Scene.");
+    LOG_1("Constructing Testing Scene.");
 
     vb_layout_.Push<float>(3);
     vb_layout_.Push<float>(2);
     vb_layout_.Push<float>(1);
+    
+    std::string msg = "i.love.you.abby";
+    Banner_.SetText(msg);
 
     Shader_.Bind();
     Shader_.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
-    
-    std::string msg = "hello.dom..how.are.you?";
-    Banner_.SetText(msg);
 
 }
 
@@ -28,27 +27,29 @@ Scene_Test::~Scene_Test()
 
 }
 
-void Scene_Test::OnUpdate(float deltaTine)
+void Scene_Test::OnUpdate(float deltaTime)
 {
-    //Debugger<DEBUG_LEVEL>::Log_Console("Updating...");
-    Camera_.SetPosition({0.0f,0.0f,0.0f});
+    Player_.Update(deltaTime);
+
+    Camera_.SetPosition(CameraTranslation_);
+    Camera_.SetRotation(CameraRotation_);
     UpdateBuffers();
 }
 
 void Scene_Test::OnRender()
 {
-    //Debugger<DEBUG_LEVEL>::Log_Console("Rendering...");
     m_Renderer.Clear();
 
     model_matrix_ = glm::translate(glm::mat4(1.0f), Translation_);
     Model_view_projection_matrix_ = Camera_.GetProjViewMatrix() * model_matrix_;
 
-    ;
+    TextureManager_.BindTextures();
 
     Shader_.Bind();
     
-    Shader_.SetUniform1iv("u_Textures", texture_slots_, texture_slot_count_);
+    Shader_.SetUniform1iv("u_Textures", TextureManager_.GetTextureSlots(), TextureManager_.GetNumTextureSlots());
     Shader_.SetUniformMat4fv("u_ModelViewProjection", Model_view_projection_matrix_);
+
     Renderer_.Draw(VertexArray_, IndexBuffer_, Shader_);
 }
 
@@ -67,18 +68,19 @@ void Scene_Test::OnHandleInput()
 
 void Scene_Test::UpdateBuffers()
 {
-    int IndiciPos = 0;
-    vertices_.clear();
-    indices_.clear();
+    unsigned int curVerticiCount = 0;
+    VertexData_.clear();
+    Indices_.clear();
     
-    //Banner_.UpdateBufferData(vertices_, indices_, IndiciPos);
+    Banner_.UpdateBufferData(VertexData_, Indices_, curVerticiCount);
+    Player_.UpdateBufferData(VertexData_, Indices_, curVerticiCount);
 
-    // LOG_1("OnUpdatedBuffers...");
-    // LOG_2("Vertices: ", vertices_.size());
-    // LOG_2("Index Buffer Count: ", indices_.size());
-    //ASSERT(false);
+    LOG_1("OnUpdatedBuffers...");
+    LOG_2("Vertices: ", VertexData_.size());
+    LOG_2("Index Buffer Count: ", Indices_.size());
+  
 
-    VertexBuffer_.Update(&vertices_.at(0), vertices_.size() * vb_layout_.GetStride() * sizeof(float));
-    IndexBuffer_.Update(&indices_.at(0), indices_.size());
+    VertexBuffer_.Update(&VertexData_.at(0), VertexData_.size() * vb_layout_.GetStride() * sizeof(float));
+    IndexBuffer_.Update(&Indices_.at(0), Indices_.size());
     VertexArray_.AddBuffer(VertexBuffer_, vb_layout_);
 }

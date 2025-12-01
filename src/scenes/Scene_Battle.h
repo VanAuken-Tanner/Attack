@@ -12,30 +12,7 @@
 #include "..\..\deps\external\vendor\glm\glm.hpp"
 #include "..\..\deps\external\vendor\glm\gtc\matrix_transform.hpp"
 
-#include <random>
-
-class RNG
-{
-public:
-    static inline int GetRandInt(int min, int max)
-    {
-        std::random_device dev;
-        std::mt19937 rng(dev());
-        std::uniform_int_distribution<std::mt19937::result_type> dist(min, max); // distribution in range [1, 6]
-
-        
-        return dist(rng);
-    }
-
-    static inline int GetRandFloat(float min, float max)
-    {
-        std::random_device dev;
-        std::mt19937 rng(dev());
-        std::uniform_real_distribution<float> dist(min, max);
-
-        return dist(rng);
-    }
-};
+#include "..\RNG.h"
 
 
 class Scene_Battle : public Scene
@@ -54,31 +31,34 @@ private://member variables
     glm::vec3 Translation_;
     glm::vec3 CameraTranslation_;
     float CameraRotation_;
-
-    bool bSpawnEnemy_;
     glm::vec3 CreateAtPos_;
-    
-    Layer Background_;
-    Layer Enemies_;
-    Layer Projectiles_;
-    GameObject Player_;
-    Banner Banner_;
 
     TextureManager TextureManager_;
     Shader Shader_;
     Renderer Renderer_;
-
-    std::vector<float> VertexData_;
-    std::vector<unsigned int> Indices_;
+    OrthographicCamera Camera_;
 
     VertexBufferLayout vb_layout_;
     VertexArray VertexArray_;
     VertexBuffer VertexBuffer_;
     IndexBuffer IndexBuffer_;
 
-    OrthographicCamera Camera_;
+    std::vector<float> VertexData_;
+    std::vector<unsigned int> Indices_;
+    
     glm::mat4 ModelMatrix_;
     glm::mat4 Model_view_projection_matrix_;// = projectionMatrix * viewMatrix * modelMatrix;
+
+    //private GAME ASSETS
+    Layer Background_;
+    Layer Enemies_;
+    Layer Projectiles_;
+    GameObject Player_;
+    Banner Banner_;
+    //====================
+
+
+    bool bSpawnEnemy_;
 
     void SetKeyActions();
     void UpdateBuffers();

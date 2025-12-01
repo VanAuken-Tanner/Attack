@@ -2,10 +2,18 @@
 
 #include "Scene.h"
 
+//Game Assets
 #include "..\Layer.h"
-#include "..\engine\OrthographicCamera.h"
-#include "..\engine\Renderer.h"
 #include "..\Banner.h"
+
+//engine internal
+#include "..\engine\OrthographicCamera.h"
+#include "..\engine\TextureManager.h"
+
+//engine external
+#include "..\..\deps\external\vendor\glm\glm.hpp"
+#include "..\..\deps\external\vendor\glm\gtc\matrix_transform.hpp"
+
 
 
 //class for testing scenes only
@@ -15,34 +23,40 @@ public:
     Scene_Test();
     ~Scene_Test();
 
-    void OnUpdate(float deltaTine) override;
+    void OnUpdate(float deltaTime) override;
     void OnRender() override;
     void OnImGuiRender() override;
     void OnHandleInput();
 private:
-    void UpdateBuffers();
- 
-    Banner Banner_;
     
-    const int texture_slot_count_ = 2;
-    int texture_slots_[2] = {0, 1};
-
-    Shader Shader_;
-    Renderer Renderer_;
-
-    OrthographicCamera Camera_;
+    //private variables
+    glm::vec3 Translation_;
     glm::vec3 CameraTranslation_;
     float CameraRotation_;
-    glm::vec3 Translation_;
-    glm::mat4 model_matrix_;
-    glm::mat4 Model_view_projection_matrix_;
+    glm::vec3 CreateAtPos_;
 
-    std::vector<float> vertices_;
-    std::vector<unsigned int> indices_;
+    TextureManager TextureManager_;
+    Shader Shader_;
+    Renderer Renderer_;
+    OrthographicCamera Camera_;
 
     VertexBufferLayout vb_layout_;
     VertexArray VertexArray_;
     VertexBuffer VertexBuffer_;
     IndexBuffer IndexBuffer_;
+
+    std::vector<float> VertexData_;
+    std::vector<unsigned int> Indices_;
+
+    glm::mat4 model_matrix_;
+    glm::mat4 Model_view_projection_matrix_;
+
+    //private GAME ASSETS
+    GameObject Player_;
+    Banner Banner_;
+    //====================
+
+    //private functions
+    void UpdateBuffers();
 
 };

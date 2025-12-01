@@ -19,12 +19,13 @@ private:
     bool Destroy_;
 
 public:
+    void UpdateBufferData(std::vector<float>& vertices, std::vector<unsigned int>& inidces, unsigned int& InidcePos);
+
     glm::vec3 GetMissleSpawnPoint() { return {Position_.x +  1.0f, Position_.y + 0.5f, 0}; }
 
     void SetVelocity(glm::vec3 velocity) { velocity_ = velocity; };
     void AdjustVelocity(glm::vec3 velocity) { velocity_ += velocity; };
    
-    bool IsOutOfBounds(glm::vec3& pos);
     void Update(float deltaTime);
 
 };

@@ -112,23 +112,3 @@ void Banner::UpdateBufferData(std::vector<float>& vertices, std::vector<unsigned
 
 
 }
-
-
-
-// float offset_ = 16;
-
- 
-
-
-// float GetOffsetForChar(char get)
-// {
-//     
-// }
-
-// void GetTextOffset()
-// {
-//     std::string msg = "i love you abby";
-//     std::vector<int> letter_offests;
-//     for(int i = 0; i < msg.size(); i++)
-//         letter_offests.push_back(GetOffsetForChar(msg.at(i)));
-// }

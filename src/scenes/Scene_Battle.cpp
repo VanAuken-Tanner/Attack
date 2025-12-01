@@ -13,9 +13,8 @@ Scene_Battle::Scene_Battle()
         Projectiles_(TEXTURE_LAYER::MISSLE),
         Player_("res/models/Character.obj", TEXTURE_LAYER::PLAYER, {-2.0f, -1.0f, 0.0f}, { 0.0f, 0.0f}, { 0.0f, 0.0f, 0.0f }, 3),
         Banner_(),
-        Camera_(g_s_left, g_s_right, g_s_bottom, g_s_top) 
+        Camera_(screen_left_, screen_right_, screen_bottom_, screen_top_) 
 {
-    Debugger<DEBUG_LEVEL>::Log_Console("!!!Constructing Battle!!!");
 
     vb_layout_.Push<float>(3);//3D coords
     vb_layout_.Push<float>(2);//Texture Coords
@@ -23,12 +22,10 @@ Scene_Battle::Scene_Battle()
     
     Background_.Objects_.push_back(new GameObject("res/models/Background.obj", TEXTURE_LAYER::BACKGROUND, {0.0f, 0.0f, 0.0f}));
 
-    std::string msg = "abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnoprstuvwxyz0123456789";
-    //std::string msg = "attack!..";
+    std::string msg = "abcdefghijklmnopqrstuvwxyz0123456789";
     Banner_.SetText(msg);
 
     //Setup our Shader
-    std::string sfilepath = "invalid filepath";
     Shader_.Bind();
     Shader_.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
     
@@ -60,6 +57,8 @@ void Scene_Battle::OnUpdate(float deltaTime)
 
 void Scene_Battle::OnRender()
 {
+    m_Renderer.Clear();
+
     ModelMatrix_ = glm::translate(glm::mat4(1.0f), Translation_);
     Model_view_projection_matrix_ = Camera_.GetProjViewMatrix() * ModelMatrix_;
 
@@ -134,6 +133,8 @@ void Scene_Battle::UpdateBuffers()
             curVerticiCount += Background_.Objects_.at(j)->GetVertexBufferData(VertexData_);
         }
     }
+    
+    
     Player_.GetIndiciBufferData(Indices_, curVerticiCount);
     curVerticiCount += Player_.GetVertexBufferData(VertexData_);
 

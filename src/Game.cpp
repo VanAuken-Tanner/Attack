@@ -12,11 +12,7 @@ Game::~Game()
 
 void Game::Init()
 {
-    g_gameState = GameState::Initializing;
-       
-    Debugger<DEBUG_LEVEL>::Log_Console("Debugging set and enabled.");
-    
-    //ASSERT(false);
+    game_state_ = GameState::Initializing;
 
     /* Initialize the library */
     if (!glfwInit())
@@ -70,24 +66,15 @@ void Game::Run()
     //The beggining of time!
     double curFrame, deltaTime, prevFrame;
 
-    //Begin InputHandling
-
-    InputHandler::AddKeyAction<GLFW_KEY_SPACE>( [](bool pressed) { 
-        std::cout << "space key pressed." << std::endl;
-        ASSERT(false); 
-    });
-    LOG_1("Inputs Added...");
-
-
-    if(g_gameState != GameState::Exiting)
+    if(game_state_ != GameState::Exiting)
     {
-        Debugger<DEBUG_LEVEL>::Log_Console("Setting GameState = Running...\nBeggining main game loop.");
-        g_gameState = GameState::Running;
+        Debugger<DEBUG_LEVEL>::Log_Console("Setting GameState = Running...\nBeginning main game loop.");
+        game_state_ = GameState::Running;
     }
 
     //Main Game Loop
     /* Loop until the user closes the window_ */
-    while (!glfwWindowShouldClose(window_) && g_gameState == GameState::Running)
+    while (!glfwWindowShouldClose(window_) && game_state_ == GameState::Running)
     {
 
         //get and update time
@@ -134,8 +121,6 @@ void Game::Run()
     if(pCurrentScene != pSceneMenu)
         delete pSceneMenu;
     delete pCurrentScene;
-
-
 }
 
 void Game::Close()

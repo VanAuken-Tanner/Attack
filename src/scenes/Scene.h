@@ -18,6 +18,16 @@ class Scene
 {
 private:
     bool exit_;
+
+protected:
+    float screen_left_ = -8.0f;
+    float screen_right_ = 8.0f;
+    float screen_bottom_ = -4.5f;
+    float screen_top_ = 4.5f;
+    float screen_ob_left_ = -16.0f;
+    float screen_ob_right_ = 16.0f;
+    float screen_ob_bottom_ = -9.0f;
+    float screen_ob_top_ = 9.0f;
     
 public:
     Scene(/* args */) { exit_ = false; }

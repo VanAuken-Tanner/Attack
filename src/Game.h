@@ -32,18 +32,26 @@
 #include "scenes\Scene_Clear.h"
 #include "scenes\Scene_Battle.h"
 
+enum GameState{
+    Initializing,
+    Running,
+    Exiting
+};
+
 class Game
 {
 public:
     Game();
     ~Game();
 
-private:
-    GLFWwindow* window_;
+    //memnber
+    GameState game_state_;
 
-public:
     void Init();
     void Run();
     void Close();
+
+private:
+    GLFWwindow* window_;
 };
 

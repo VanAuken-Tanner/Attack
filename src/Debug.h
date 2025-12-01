@@ -2,9 +2,12 @@
 #include <string>
 #include <iostream>
 
-#include "Globals.h"//TODO - This seems not good.
-
 #include "..\deps\external\GLEW\include\GL\glew.h"
+
+
+#ifndef DEBUG_LEVEL
+    #define DEBUG_LEVEL 0
+#endif
 
 #define ASSERT(x) if(!(x)) Debugger<DEBUG_LEVEL>::Break(__FILE__, __LINE__);
 
@@ -47,19 +50,19 @@ public:
 
     static void Break(const char* file, int line)
     {
-        if(log_level > 0)
-        {
-            std::cout << "--------------- BREAK --------------" << std::endl;
-            std::cout << "File: " << file << " Line: " << line << std::endl;
-            std::cout << "Press any key + enter to continue..." << std::endl;
-            std::string input;
-            std::cin.clear();
-            std::cin >> input;
-            std::cin.clear();
+        // if(log_level > 0)
+        // {
+        //     std::cout << "--------------- BREAK --------------" << std::endl;
+        //     std::cout << "File: " << file << " Line: " << line << std::endl;
+        //     std::cout << "Press any key + enter to continue..." << std::endl;
+        //     std::string input;
+        //     std::cin.clear();
+        //     std::cin >> input;
+        //     std::cin.clear();
 
-            if(input[0] == 'x')
-                g_gameState = GameState::Exiting;
-        } 
+        //     if(input[0] == 'x')
+        //         g_gameState = GameState::Exiting;
+        // } 
     }
 
     static void BreakWMessage(std::string sMsg, const char* file, int line)
